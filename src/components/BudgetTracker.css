@@ -1,0 +1,32 @@
+.budget-tracker {
+    margin-top: 80px;
+}
+
+.budget-list {
+    border: 1px solid red;
+    margin-top: 80px;
+    padding: 40px;
+}
+
+.budget-item {
+    margin-top: 20px;
+}
+
+.budget-item__description {
+    background-color: white;
+    font-weight: 700;
+}
+
+.budget-item__amount {
+    background-color: green;
+    font-weight: 600;
+}
+
+.budget-item__date {
+    background-color: lightpink;
+    font-weight: 500;
+}
+
+.budget-item__category {
+    background-color: lightsalmon;
+}
