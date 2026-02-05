@@ -67,6 +67,11 @@ const BudgetTracker = () => {
         setCategory("Expense");
     }
 
+    const handleDelete = (id: string) => {
+        const newArray = budgetItems.filter(item => item.id !== id);
+        setBudgetItems(newArray);
+    }
+
     return (
         <div className="budget-tracker">
             <div>
@@ -111,10 +116,16 @@ const BudgetTracker = () => {
                 <h2>This is a budget list</h2>
                 {budgetItems.map(item => (
                     <div className="budget-item" key={item.id}>
-                        <p className="budget-item__description">{item.description}</p>
-                        <p className="budget-item__amount">{item.amount}</p>
-                        <p className="budget-item__date">{item.date}</p>
-                        <p className="budget-item__category">{item.category}</p>
+                        <div>
+                            <p className="budget-item__description">{item.description}</p>
+                            <p className="budget-item__amount">{item.amount}</p>
+                            <p className="budget-item__date">{item.date}</p>
+                            <p className="budget-item__category">{item.category}</p>
+                        </div>
+
+                        <button onClick={() => handleDelete(item.id)} className="budget-item__delete">
+                        Delete
+                        </button>
                     </div>
                 ))}
             </div>

@@ -67,6 +67,24 @@
     transition: background 0.2s;  
 }
 
+
 .budget-tracker-form__submit:hover {
     background: #009e3a;
+}
+
+.budget-item__delete {
+    text-align: right;
+    margin-left: 0 auto;
+    padding: 5px 10px;
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.budget-item__button-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
 }
