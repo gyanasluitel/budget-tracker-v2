@@ -1,5 +1,7 @@
 .budget-tracker {
     margin-top: 80px;
+    padding: 40px;
+    background-color: white;
 }
 
 .budget-list {
@@ -10,23 +12,61 @@
 
 .budget-item {
     margin-top: 20px;
+    border: 1px solid black;
+    padding: 20px;
 }
 
 .budget-item__description {
-    background-color: white;
     font-weight: 700;
 }
 
 .budget-item__amount {
-    background-color: green;
     font-weight: 600;
 }
 
 .budget-item__date {
-    background-color: lightpink;
     font-weight: 500;
 }
 
 .budget-item__category {
-    background-color: lightsalmon;
+}
+
+
+.budget-tracker-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* align-items: center; */
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    max-width: 650px;
+    margin: 0 auto;
+    border: 1px solid #e0e7ef;
+}
+
+.budget-tracker-form__input {
+    flex: 1;
+    padding: 0.5rem 0.75 rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.budget-tracker-form__submit {
+    padding: 0.5rem 1rem;
+    background: #00c853;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;  
+}
+
+.budget-tracker-form__submit:hover {
+    background: #009e3a;
 }

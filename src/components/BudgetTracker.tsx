@@ -31,13 +31,80 @@ const INITIAL_BUDGET_ITEMS: BudgetItem[] = [
 const BudgetTracker = () => {
     const [budgetItems, setBudgetItems] = useState<BudgetItem []>(INITIAL_BUDGET_ITEMS);
 
-    console.log(budgetItems);
+    const [description, setDescription] = useState("");
+    const [amount, setAmount] = useState<number>();
+    const [date, setDate] = useState("");
+    const [category, setCategory] = useState<Category>("Expense");
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (description.trim() === "") {
+            alert("Description is required");
+            console.log("Description is required");
+            return;
+        }
+
+        if (amount === undefined || isNaN(amount) || amount <= 0) {
+            console.log("Amount must be a positive number");
+            alert("Amount must be a positive number");
+            return;
+        }
+
+        const itemToAdd: BudgetItem = {
+            id: crypto.randomUUID(),
+            description,
+            amount: amount,
+            date: date,
+            category: category
+        }
+
+        setBudgetItems(prev => [...prev, itemToAdd])
+
+        setDescription("");
+        setAmount(0);
+        setDate("");
+        setCategory("Expense");
+    }
 
     return (
         <div className="budget-tracker">
             <div>
                 <h2> This is a form</h2>
-                <form></form>
+                <form className="budget-tracker-form" onSubmit={handleSubmit}>
+                    <input 
+                        className="budget-tracker-form__input"
+                        type="text" 
+                        placeholder="Enter budget item..." 
+                        value={description} 
+                        onChange={(e) => setDescription(e.target.value)}  />
+
+                        <input
+                            className="budget-tracker-form__input"
+                            type="number"
+                            placeholder="Enter the amount..."
+                            value={amount}
+                            onChange={(e)=> setAmount(Number(e.target.value))}
+                        />
+
+                        <input
+                            className="budget-tracker-form__input"
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                        />
+
+                        <select
+                            className="budget-tracker-form__input"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value as Category)}
+                        >
+                            <option value="Income">Income</option>
+                            <option value="Expense">Expense</option>
+                        </select>
+
+                        <button type="submit" className="budget-tracker-form__submit">Submit</button>
+                </form>
             </div>
 
             <div className="budget-list">
