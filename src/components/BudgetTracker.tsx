@@ -75,7 +75,6 @@ const BudgetTracker = () => {
     return (
         <div className="budget-tracker">
             <div>
-                <h2> This is a form</h2>
                 <form className="budget-tracker-form" onSubmit={handleSubmit}>
                     <input 
                         className="budget-tracker-form__input"
@@ -113,7 +112,6 @@ const BudgetTracker = () => {
             </div>
 
             <div className="budget-list">
-                <h2>This is a budget list</h2>
                 {budgetItems.map(item => (
                     <div className="budget-item" key={item.id}>
                         <div>
@@ -123,9 +121,7 @@ const BudgetTracker = () => {
                             <p className="budget-item__category">{item.category}</p>
                         </div>
 
-                        <button onClick={() => handleDelete(item.id)} className="budget-item__delete">
-                        Delete
-                        </button>
+                        <button onClick={() => handleDelete(item.id)} className="budget-item__delete">Delete</button>
                     </div>
                 ))}
             </div>
