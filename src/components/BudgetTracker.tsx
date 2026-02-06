@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./BudgetTracker.css";
 
 type Category = "Income" | "Expense";
@@ -29,12 +29,40 @@ const INITIAL_BUDGET_ITEMS: BudgetItem[] = [
 ];
 
 const BudgetTracker = () => {
-    const [budgetItems, setBudgetItems] = useState<BudgetItem []>(INITIAL_BUDGET_ITEMS);
+    const [budgetItems, setBudgetItems] = useState<BudgetItem[]>([]);
 
     const [description, setDescription] = useState("");
-    const [amount, setAmount] = useState<number>();
+    const [amount, setAmount] = useState<number>(0);
     const [date, setDate] = useState("");
     const [category, setCategory] = useState<Category>("Expense");
+
+    // Removed effect that sets state synchronously on mount
+
+    useEffect(() => {
+        // Load from local storage or initialize if not present
+        const items = localStorage.getItem("budgetItems");
+        if (items) {
+            try {
+                const itemParsed: BudgetItem[] = JSON.parse(items);
+                setBudgetItems(itemParsed);
+            } catch (e) {
+                // If parsing fails, reset to initial
+                setBudgetItems(INITIAL_BUDGET_ITEMS);
+                localStorage.setItem("budgetItems", JSON.stringify(INITIAL_BUDGET_ITEMS));
+            }
+        } else {
+            // If nothing in localStorage, initialize it
+            localStorage.setItem("budgetItems", JSON.stringify(INITIAL_BUDGET_ITEMS));
+        }
+    }, []);
+
+    useEffect(() => {
+        // Save to local storage
+        if (budgetItems.length === 0) {
+            return;
+        };
+        localStorage.setItem("budgetItems", JSON.stringify(budgetItems));
+    }, [budgetItems]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -88,7 +116,7 @@ const BudgetTracker = () => {
                             type="number"
                             placeholder="Enter the amount..."
                             value={amount}
-                            onChange={(e)=> setAmount(Number(e.target.value))}
+                            onChange={e => setAmount(Number(e.target.value))}
                         />
 
                         <input
