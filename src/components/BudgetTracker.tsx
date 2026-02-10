@@ -44,11 +44,15 @@ const BudgetTracker = () => {
         if (items) {
             try {
                 const itemParsed: BudgetItem[] = JSON.parse(items);
-                setBudgetItems(itemParsed);
-            } catch (e) {
-                // If parsing fails, reset to initial
-                setBudgetItems(INITIAL_BUDGET_ITEMS);
-                localStorage.setItem("budgetItems", JSON.stringify(INITIAL_BUDGET_ITEMS));
+
+                if (itemParsed.length > 0) {
+                    // Only set if there are items, otherwise initialize with default
+                    // exhaustive-deps is disabled here to avoid infinite loop since setBudgetItems is a dependency
+                    // eslint-disable-next-line react-hooks/exhaustive-deps
+                    setBudgetItems(itemParsed);
+                }
+            } catch (error) {
+                console.log("Error: ", error);
             }
         } else {
             // If nothing in localStorage, initialize it
@@ -102,6 +106,7 @@ const BudgetTracker = () => {
 
     return (
         <div className="budget-tracker">
+
             <div>
                 <form className="budget-tracker-form" onSubmit={handleSubmit}>
                     <input 
