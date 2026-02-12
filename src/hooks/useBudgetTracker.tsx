@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export type Category = "Income" | "Expense";
 
@@ -14,6 +14,7 @@ export interface BudgetItem {
 const useBudgetTracker = () => {
     const [budgetItems, setBudgetItems] = useState<BudgetItem[]>(() => {
         try {
+            console.log("Retrieving items from localStorage...");
         const items = localStorage.getItem("budgetItems");
         return items ? JSON.parse(items) : [];
         }
@@ -27,6 +28,10 @@ const useBudgetTracker = () => {
         const newArray = budgetItems.filter(item => item.id !== id);
         setBudgetItems(newArray);
     }
+
+    useEffect(() => {
+        localStorage.setItem("budgetItems", JSON.stringify(budgetItems));
+    }, [budgetItems])
 
     return {
         budgetItems, setBudgetItems, handleDelete
