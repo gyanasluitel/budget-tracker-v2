@@ -1,14 +1,11 @@
-import { useEffect } from "react";
-import useBudgetTracker from "../hooks/useBudgetTracker";
 import './BudgetList.css';
 import Budget from "../components/Budget";
+import { useBudgetContext } from "../context/BudgetContextProvider";
+import useBudgetTracker from '../hooks/useBudgetTracker';
 
 const BudgetList = () => {
-    const { budgetItems, handleDelete } = useBudgetTracker();
-
-    useEffect(() => {
-        localStorage.setItem("budgetItems", JSON.stringify(budgetItems));
-    }, [budgetItems]);
+    const { deleteBudgetItem : handleDelete, budgetItems } = useBudgetContext();
+    const { newBudgetItems  } = useBudgetTracker({ budgetItems });
 
     if (budgetItems.length === 0) {
         return <div>
@@ -19,8 +16,11 @@ const BudgetList = () => {
     return (
         <div>
             <div className="budget-item-list" style={{width:'100%'}}>
-                {budgetItems.map(item => (
-                    <Budget key={item.id} item={item} handleDelete={handleDelete} />
+                {newBudgetItems.map(item => (
+                    <div key={item.id}>
+                        <Budget key={item.id} item={item} handleDelete={handleDelete} />
+                        <p>Medium: {item.medium}</p>
+                    </div>
                 ))}
             </div>
         </div>

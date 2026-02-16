@@ -1,20 +1,20 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router"
 import type { BudgetItem } from "./BudgetFormPage";
+import { useBudgetContext } from "../context/BudgetContextProvider";
 
 const BudgetItemEdit = () => {
    const { id } = useParams();
    const navigate = useNavigate();
+   const {budgetItems} = useBudgetContext();
 
    const item = useMemo(() => {
-        const localStorageItems = localStorage.getItem("budgetItems");
-        if (localStorageItems) {
-            const parsedItems: BudgetItem[] = JSON.parse(localStorageItems);
-            return parsedItems.find((item) => item.id === id);
+        if (budgetItems) {
+            return budgetItems.find((item) => item.id === id);
         }
 
     return null;
-   }, [id])
+   }, [budgetItems, id])
 
     const [form, setForm] = useState<BudgetItem | null>(item ? item : null); 
 

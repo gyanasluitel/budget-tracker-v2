@@ -2,11 +2,11 @@ import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router";
 import type { BudgetItem } from "./BudgetFormPage";
 import "./BudgetItemDetailView.css";
-import useBudgetTracker from "../hooks/useBudgetTracker";
+import { useBudgetContext } from "../context/BudgetContextProvider";
 
 const BudgetItemDetailView = () => {
     const { id } = useParams();
-    const { handleDelete } = useBudgetTracker();
+    const { deleteBudgetItem } = useBudgetContext();
     const navigate = useNavigate();
 
     const item = useMemo(() => {
@@ -21,7 +21,7 @@ const BudgetItemDetailView = () => {
 
     const onDelete = (id: string) => {
         try {
-            handleDelete(id);
+            deleteBudgetItem(id);
             navigate("/");
         }
         catch (error) {

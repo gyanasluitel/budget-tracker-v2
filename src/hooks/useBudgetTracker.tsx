@@ -1,40 +1,25 @@
-import { useEffect, useState } from "react";
+import type { BudgetItem } from "../pages/BudgetFormPage";
 
-export type Category = "Income" | "Expense";
+export interface ExtendedBudgetItem extends BudgetItem {
+    // Add any additional properties or methods if needed
+    medium: "Cash" | "Card" | "Online";
 
-export interface BudgetItem {
-    id: string;
-    description: string;
-    amount: number;
-    date: string;
-    category: Category;
 }
 
+interface Props {
+    budgetItems?: BudgetItem[];
+}
 
-const useBudgetTracker = () => {
-    const [budgetItems, setBudgetItems] = useState<BudgetItem[]>(() => {
-        try {
-            console.log("Retrieving items from localStorage...");
-        const items = localStorage.getItem("budgetItems");
-        return items ? JSON.parse(items) : [];
+const useBudgetTracker = ({ budgetItems }: Props) => {
+    const newBudgetItems : ExtendedBudgetItem[] = budgetItems? budgetItems.map(item => {
+        return {
+            ...item,
+            medium: "Cash"
         }
-        catch (error) {
-        console.log("Error: ", error);
-        return [];
-        }
-    });
-
-    const handleDelete = (id: string) => {
-        const newArray = budgetItems.filter(item => item.id !== id);
-        setBudgetItems(newArray);
-    }
-
-    useEffect(() => {
-        localStorage.setItem("budgetItems", JSON.stringify(budgetItems));
-    }, [budgetItems])
+    }) : [];
 
     return {
-        budgetItems, setBudgetItems, handleDelete
+        newBudgetItems
     }
 }
 

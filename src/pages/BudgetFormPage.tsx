@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./BudgetFormPage.css";
-import useBudgetTracker from "../hooks/useBudgetTracker";
-import { BiDownArrowAlt, BiUpArrowAlt } from "react-icons/bi";
-import { MdDelete } from "react-icons/md";
+import { useBudgetContext } from "../context/BudgetContextProvider";
+import BudgetList from "./BudgetList";
 
 export type Category = "Income" | "Expense";
 
@@ -15,47 +14,43 @@ export interface BudgetItem {
 }
 
 const BudgetForm = () => {
-        const { budgetItems, setBudgetItems, handleDelete } = useBudgetTracker();
-    
-        const [description, setDescription] = useState("");
-        const [amount, setAmount] = useState<number>(0);
-        const [date, setDate] = useState("");
-        const [category, setCategory] = useState<Category>("Expense");
-    
-        useEffect(() => {
-            localStorage.setItem("budgetItems", JSON.stringify(budgetItems));
-        }, [budgetItems]);
-    
-        const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-    
-            if (description.trim() === "") {
-                alert("Description is required");
-                console.log("Description is required");
-                return;
-            }
-    
-            if (amount === undefined || isNaN(amount) || amount <= 0) {
-                console.log("Amount must be a positive number");
-                alert("Amount must be a positive number");
-                return;
-            }
-    
-            const itemToAdd: BudgetItem = {
-                id: crypto.randomUUID(),
-                description,
-                amount: amount,
-                date: date,
-                category: category
-            }
-    
-            setBudgetItems(prev => [...prev, itemToAdd])
-    
-            setDescription("");
-            setAmount(0);
-            setDate("");
-            setCategory("Expense");
+    const { setBudgetItems } = useBudgetContext();
+
+    const [description, setDescription] = useState("");
+    const [amount, setAmount] = useState<number>(0);
+    const [date, setDate] = useState("");
+    const [category, setCategory] = useState<Category>("Expense");
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (description.trim() === "") {
+            alert("Description is required");
+            console.log("Description is required");
+            return;
         }
+
+        if (amount === undefined || isNaN(amount) || amount <= 0) {
+            console.log("Amount must be a positive number");
+            alert("Amount must be a positive number");
+            return;
+        }
+
+        const itemToAdd: BudgetItem = {
+            id: crypto.randomUUID(),
+            description,
+            amount: amount,
+            date: date,
+            category: category
+        }
+
+        setBudgetItems(prev => [...prev, itemToAdd])
+
+        setDescription("");
+        setAmount(0);
+        setDate("");
+        setCategory("Expense");
+    }
     
 
     return (
@@ -110,25 +105,13 @@ const BudgetForm = () => {
             </div>
 
             <button type="submit" className="budget-tracker-form__submit">Submit</button>
-        </form>
+            </form>
 
-        <div>
-            <div className="budget-item-list" style={{width:'100%'}}>
-                {budgetItems.map(item => (
-                    <div className="budget-item" key={item.id} style={{ cursor: "pointer", width: '100%' }}>
-                        <div className="budget-item__info" style={{ cursor: "pointer", width: '100%' }} title="Click to view details">
-                            <div className="budget-item__title-group">
-                                <h3 className="budget-item__title" style={{marginBottom:'0.5rem'}}>{item.description}</h3>
-                                <span>{item.category === "Income" ? <BiUpArrowAlt color="green" size={30} /> : <BiDownArrowAlt color="red" size={30} /> }</span>
-                            </div>
-                            <p className="budget-item__amount" style={{marginBottom:'0.5rem'}}>Amount: ${item.amount}</p>
-                            <p className="budget-item__date" style={{marginBottom:'0.5rem'}}>Date: {item.date}</p>
-                        </div>
-                        <button className="budget-item__delete" onClick={() => handleDelete(item.id)}><MdDelete color="red" /></button>
-                    </div>
-                ))}
+            <div>
+                <div className="budget-item-list" style={{width:'100%'}}>
+                    <BudgetList />
+                </div>
             </div>
-        </div>
     </div>
     )
 }
