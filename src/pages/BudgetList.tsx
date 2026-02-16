@@ -17,10 +17,7 @@ const BudgetList = () => {
         <div>
             <div className="budget-item-list" style={{width:'100%'}}>
                 {newBudgetItems.map(item => (
-                    <div key={item.id}>
-                        <Budget key={item.id} item={item} handleDelete={handleDelete} />
-                        <p>Medium: {item.medium}</p>
-                    </div>
+                    <Budget key={item.id} item={item} handleDelete={handleDelete} />
                 ))}
             </div>
         </div>
