@@ -1,12 +1,13 @@
 import { useState } from "react";
 import "./BudgetFormPage.css";
-import { useBudgetContext } from "../context/BudgetContextProvider";
 import BudgetList from "./BudgetList";
+import { useAppDispatch } from "../hooks/hooks";
+import { createBudgetItem } from "../store/slices/budgetItemSlice";
 
 export type Category = "Income" | "Expense";
 
 export interface BudgetItem {
-    id: string;
+    _id: string;
     description: string;
     amount: number;
     date: string;
@@ -14,12 +15,12 @@ export interface BudgetItem {
 }
 
 const BudgetForm = () => {
-    const { setBudgetItems } = useBudgetContext();
-
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState<number>(0);
     const [date, setDate] = useState("");
     const [category, setCategory] = useState<Category>("Expense");
+
+    const dispatch = useAppDispatch();
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -36,20 +37,19 @@ const BudgetForm = () => {
             return;
         }
 
-        const itemToAdd: BudgetItem = {
-            id: crypto.randomUUID(),
+        const itemToAdd: Omit<BudgetItem, "_id"> = {
             description,
             amount: amount,
             date: date,
             category: category
         }
 
-        setBudgetItems(prev => [...prev, itemToAdd])
-
         setDescription("");
         setAmount(0);
         setDate("");
         setCategory("Expense");
+
+        dispatch(createBudgetItem(itemToAdd)).unwrap();
     }
     
 

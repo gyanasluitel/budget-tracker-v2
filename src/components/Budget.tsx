@@ -12,7 +12,7 @@ const Budget = ({item, handleDelete}: BudgetProps) => {
     const navigate = useNavigate();
     
     const handleNavigation = () => {
-        navigate(`/item/${item.id}`)
+        navigate(`/item/${item._id}`)
     };
 
     return (
@@ -25,7 +25,7 @@ const Budget = ({item, handleDelete}: BudgetProps) => {
                 <p className="budget-item__amount" style={{marginBottom:'0.5rem'}}>Amount: ${item.amount}</p>
                 <p className="budget-item__date" style={{marginBottom:'0.5rem'}}>Date: {item.date}</p>
             </div>
-            <button className="budget-item__delete" onClick={() => handleDelete(item.id)}><MdDelete color="red" /></button>
+            <button className="budget-item__delete" onClick={() => handleDelete(item._id)}><MdDelete color="red" /></button>
         </div>
     )
 }

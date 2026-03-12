@@ -1,60 +1,78 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router";
-import type { BudgetItem } from "./BudgetFormPage";
 import "./BudgetItemDetailView.css";
-import { useBudgetContext } from "../context/BudgetContextProvider";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { deleteBudgetItem, fetchAllBudgetItems } from "../store/slices/budgetItemSlice";
 
 const BudgetItemDetailView = () => {
-    const { id } = useParams();
-    const { deleteBudgetItem } = useBudgetContext();
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const { budgetItems, loading } = useAppSelector(state => state.budgetItem);
+
+    useEffect(() => {
+        if (budgetItems.length === 0) {
+            dispatch(fetchAllBudgetItems());
+        }
+    }, [dispatch, budgetItems.length]);
 
     const item = useMemo(() => {
-        const items = localStorage.getItem("budgetItems");
-        if (items) {
-            const parsedItems: BudgetItem[] = JSON.parse(items);
-            return parsedItems.find(item => item.id === id);
+        if (budgetItems && id) {
+            return budgetItems.find(item => item._id === id);
         }
-
         return null;
-    }, [id])
+    }, [budgetItems, id]);
 
-    const onDelete = (id: string) => {
+    const onDelete = async () => {
+        if (!item) {
+            return;
+        }
         try {
-            deleteBudgetItem(id);
+            await dispatch(deleteBudgetItem(item._id)).unwrap();
             navigate("/");
         }
         catch (error) {
-            console.log("Error deleting item: ", error);
+            console.error("Error deleting item: ", error);
         }
-    }
+    };
 
     const handleEdit = () => {
         navigate(`/item/${id}/edit`);
+    };
+
+    if (loading) {
+        return <div>Loading...</div>;
     }
 
     if (!item) {
-        return <div>Budget item not found</div>
+        return <div>Budget item not found</div>;
     }
+
+    const details = [
+        { title: "Description", content: item.description },
+        { title: "Amount", content: `$${item.amount.toFixed(2)}` },
+        { title: "Date", content: item.date },
+        { title: "Category", content: item.category },
+    ];
 
     return (
         <div className="budget-item-detail">
             <h2>Budget Item Detail</h2>
             <ul className="budget-item-detail__list">
-                <li className="budget-item-detail__item">
-                    <p className="budget-item-detail__item-title">Description:</p>
-                    <p className="budget-item-detail__item-content">{item.description}</p>
-                </li>
-                <li className="budget-item-detail__item"><p className="budget-item-detail__item-title">Amount:</p><p className="budget-item-detail__item-content">${item.amount}</p></li>
-                <li className="budget-item-detail__item"><p className="budget-item-detail__item-title">Date:</p><p className="budget-item-detail__item-content">{item.date}</p></li>
-                <li className="budget-item-detail__item"><p className="budget-item-detail__item-title">Category:</p><p className="budget-item-detail__item-content">{item.category}</p></li>
-
-                <button className="budget-item-detail__btn" onClick={handleEdit} >Edit</button>
-                <button className="budget-item-detail__btn budget-item-detail__delete-btn" onClick={() => onDelete(item.id)} >Delete</button>
+                {details.map(({ title, content }) => (
+                    <li key={title} className="budget-item-detail__item">
+                        <p className="budget-item-detail__item-title">{title}:</p>
+                        <p className="budget-item-detail__item-content">{content}</p>
+                    </li>
+                ))}
             </ul>
+            <div className="budget-item-detail__actions">
+                <button className="budget-item-detail__btn" onClick={handleEdit}>Edit</button>
+                <button className="budget-item-detail__btn budget-item-detail__delete-btn" onClick={onDelete}>Delete</button>
+            </div>
         </div>
-    )
-}
+    );
+};
 
 
 export default BudgetItemDetailView;

@@ -1,22 +1,33 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router"
 import type { BudgetItem } from "./BudgetFormPage";
-import { useBudgetContext } from "../context/BudgetContextProvider";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { fetchAllBudgetItems, updateBudgetItem } from "../store/slices/budgetItemSlice";
 
 const BudgetItemEdit = () => {
    const { id } = useParams();
    const navigate = useNavigate();
-   const {budgetItems} = useBudgetContext();
-
-   const item = useMemo(() => {
-        if (budgetItems) {
-            return budgetItems.find((item) => item.id === id);
+    const dispatch = useAppDispatch();
+    const { budgetItems, loading } = useAppSelector(state => state.budgetItem);
+       
+    useEffect(() => {
+        if (budgetItems.length === 0) {
+            dispatch(fetchAllBudgetItems());
         }
+    }, [dispatch, budgetItems.length]);
 
-    return null;
-   }, [budgetItems, id])
+    const item = useMemo(() => {
+        if (budgetItems && id) {
+            return budgetItems.find(item => item._id === id);
+        }
+        return null;
+    }, [budgetItems, id]);
 
     const [form, setForm] = useState<BudgetItem | null>(item ? item : null); 
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     if (!form) {
         return <div>Item not found...</div>
@@ -37,13 +48,9 @@ const BudgetItemEdit = () => {
         }
 
         try {
-            const localStorageItems = localStorage.getItem("budgetItems");
-
-            if (localStorageItems) {
-                const parsedItems: BudgetItem[] = JSON.parse(localStorageItems);
-                const updatedItems = parsedItems.map(item => item.id === form.id ? form : item);
-                localStorage.setItem("budgetItems", JSON.stringify(updatedItems));
-            }
+            console.log("Form data here for update: ", form);
+            
+            dispatch(updateBudgetItem(form)).unwrap();
 
             navigate("/");
         } catch (error) {

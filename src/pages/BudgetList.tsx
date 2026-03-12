@@ -1,13 +1,27 @@
 import './BudgetList.css';
 import Budget from "../components/Budget";
-import { useBudgetContext } from "../context/BudgetContextProvider";
-import useBudgetTracker from '../hooks/useBudgetTracker';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../hooks/hooks';
+import { deleteBudgetItem, fetchAllBudgetItems } from '../store/slices/budgetItemSlice';
 
 const BudgetList = () => {
-    const { deleteBudgetItem : handleDelete, budgetItems } = useBudgetContext();
-    const { newBudgetItems  } = useBudgetTracker({ budgetItems });
+    const dispatch = useAppDispatch();
+    const { budgetItems: budgetItemsFromRedux, loading } = useAppSelector(state => state.budgetItem);
 
-    if (budgetItems.length === 0) {
+    useEffect(() => {
+        dispatch(fetchAllBudgetItems())
+    }, [dispatch])
+
+    const handleDelete = (id: string) => {
+        console.log(`Deleting item with id: ${id}`)
+        dispatch(deleteBudgetItem(id))
+    }
+
+    if (loading) {
+        return <div>Loading...</div>
+    }
+
+    if (budgetItemsFromRedux.length === 0) {
         return <div>
             <p className="budget-item-list budget-item-list__empty">No budget items found. Please add some.</p>
         </div>
@@ -16,8 +30,8 @@ const BudgetList = () => {
     return (
         <div>
             <div className="budget-item-list" style={{width:'100%'}}>
-                {newBudgetItems.map(item => (
-                    <Budget key={item.id} item={item} handleDelete={handleDelete} />
+                {budgetItemsFromRedux.map(item => (
+                    <Budget key={item._id} item={item} handleDelete={() => handleDelete(item._id)} />
                 ))}
             </div>
         </div>
